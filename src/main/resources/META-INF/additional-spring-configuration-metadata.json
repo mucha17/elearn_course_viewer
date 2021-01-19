@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "app.oidc_issuer_location",
+      "type": "java.lang.String",
+      "description": "Location of OAuth2 OpenID Connect Issuer."
+    },
+    {
+      "name": "app.oidc_client_id",
+      "type": "java.lang.String",
+      "description": "Client ID of OAuth2 OpenID Connect Server."
+    },
+    {
+      "name": "app.oidc_audience",
+      "type": "java.lang.String",
+      "description": "Required OAuth2 OpenID Connect audience in JWT."
+    },
+    {
+      "name": "app.hyperlink",
+      "type": "java.lang.String",
+      "description": "Hyperlink to the application."
+    }
+  ] }
