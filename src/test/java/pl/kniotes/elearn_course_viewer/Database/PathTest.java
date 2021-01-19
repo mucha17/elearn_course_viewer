@@ -85,9 +85,9 @@ public class PathTest {
 
     @AfterEach
     public void afterEach() {
-//        this.mongoTemplate.dropCollection(Path.class);
-//        this.mongoTemplate.dropCollection(Course.class);
-//        this.mongoTemplate.dropCollection(Module.class);
+        this.mongoTemplate.dropCollection(Path.class);
+        this.mongoTemplate.dropCollection(Course.class);
+        this.mongoTemplate.dropCollection(Module.class);
     }
 
     @Test
