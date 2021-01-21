@@ -7,4 +7,6 @@ import pl.kniotes.elearn_course_viewer.Models.Module.Module;
 @Repository
 public interface ModuleRepository extends MongoRepository<Module, String> {
     Module findModuleById(String id);
+
+    Module deleteModuleById(String id);
 }

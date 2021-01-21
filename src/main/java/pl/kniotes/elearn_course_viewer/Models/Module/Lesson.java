@@ -14,4 +14,9 @@ public class Lesson {
     private String name;
     private String description;
     private HashMap<Integer, Content> contents; // lesson contents like video, reading, podcast, etc.
+
+    public Lesson(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }
