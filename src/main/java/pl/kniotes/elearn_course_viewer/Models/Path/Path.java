@@ -21,5 +21,4 @@ public class Path {
     private String name;
     private String description;
     private HashMap<Integer, Section> sections;
-    private String exam; // exam's url
 }

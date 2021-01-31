@@ -14,5 +14,4 @@ public class Section {
     private String name;
     private String description;
     private List<OrderedCourse> courses;
-    private String exam; // exam's url
 }
