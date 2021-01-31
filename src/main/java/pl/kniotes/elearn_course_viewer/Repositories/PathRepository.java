@@ -7,4 +7,6 @@ import pl.kniotes.elearn_course_viewer.Models.Path.Path;
 @Repository
 public interface PathRepository extends MongoRepository<Path, String> {
     Path findPathById(String id);
+
+    Path deletePathById(String id);
 }
