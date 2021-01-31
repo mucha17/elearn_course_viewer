@@ -74,6 +74,107 @@ public class ModuleController {
     }
 
     @CrossOrigin("*")
+    @GetMapping("/api/modules/{moduleId}/downloadables")
+    public HashMap<Integer, String> getDownloadables(@PathVariable("moduleId") String moduleId) {
+        Module module = this.moduleRepository.findModuleById(moduleId);
+        if (module == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        return module.getDownloadables();
+    }
+
+    @CrossOrigin("*")
+    @PostMapping("/api/modules/{moduleId}/downloadables")
+    public String postDownloadable(@PathVariable("moduleId") String moduleId, Integer orderKey, String url) {
+        Module module = this.moduleRepository.findModuleById(moduleId);
+        if (module == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        String downloadable;
+        if (url != null && !url.isBlank()) {
+            downloadable = url;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Url is not set");
+        }
+        if (module.getDownloadables() == null) {
+            module.setDownloadables(new HashMap<>());
+        }
+        int key = 0;
+        if (orderKey != null) {
+            if (orderKey < 1) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OrderKey must be bigger than 1");
+            }
+            if (module.getDownloadables().containsKey(orderKey)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a downloadable assigned to this orderKey");
+            }
+            key = orderKey;
+        } else {
+            for (int item : module.getDownloadables().keySet()) {
+                if (key < item) {
+                    key = item;
+                }
+            }
+            key++;
+        }
+        module.getDownloadables().put(key, downloadable);
+        this.moduleRepository.save(module);
+        return this.moduleRepository.findModuleById(moduleId).getDownloadables().get(key);
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/api/modules/{moduleId}/downloadables/{downloadableKey}")
+    public String getDownloadable(@PathVariable("moduleId") String moduleId, @PathVariable("downloadableKey") Integer downloadableKey) {
+        Module module = this.moduleRepository.findModuleById(moduleId);
+        if (module == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        if (module.getDownloadables() == null) {
+            module.setDownloadables(new HashMap<>());
+        }
+        return module.getDownloadables().get(downloadableKey);
+    }
+
+    @CrossOrigin("*")
+    @PutMapping("/api/modules/{moduleId}/downloadables/{downloadableKey}")
+    public String updateDownloadable(@PathVariable("moduleId") String moduleId, @PathVariable("downloadableKey") Integer downloadableKey, String url) {
+        Module module = this.moduleRepository.findModuleById(moduleId);
+        if (module == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        if (module.getDownloadables() == null) {
+            module.setDownloadables(new HashMap<>());
+        }
+        String downloadable = module.getDownloadables().get(downloadableKey);
+        if(downloadable == null || downloadable.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downloadable is invalid");
+        }
+        if(url != null && !url.isBlank()) {
+            downloadable = url;
+        }
+        module.getDownloadables().replace(downloadableKey, downloadable);
+        this.moduleRepository.save(module);
+        return this.moduleRepository.findModuleById(moduleId).getDownloadables().get(downloadableKey);
+    }
+
+    @CrossOrigin("*")
+    @DeleteMapping("/api/modules/{moduleId}/downloadables/{downloadableKey}")
+    public Boolean deleteDownloadable(@PathVariable("moduleId") String moduleId, @PathVariable("downloadableKey") Integer downloadableKey) {
+        Module module = this.moduleRepository.findModuleById(moduleId);
+        if (module == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        if (module.getDownloadables() == null) {
+            module.setDownloadables(new HashMap<>());
+        }
+        if (module.getDownloadables().get(downloadableKey) == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downloadable is invalid");
+        }
+        module.getDownloadables().remove(downloadableKey);
+        this.moduleRepository.save(module);
+        return this.moduleRepository.findModuleById(moduleId).getDownloadables().get(downloadableKey) == null;
+    }
+
+    @CrossOrigin("*")
     @GetMapping("/api/modules/{moduleId}/lessons")
     public HashMap<Integer, Lesson> getLessons(@PathVariable("moduleId") String moduleId) {
         Module module = this.moduleRepository.findModuleById(moduleId);
@@ -85,7 +186,7 @@ public class ModuleController {
 
     @CrossOrigin("*")
     @PostMapping("/api/modules/{moduleId}/lessons")
-    public Lesson postLesson(@PathVariable("moduleId") String moduleId, String name, String description) {
+    public Lesson postLesson(@PathVariable("moduleId") String moduleId, String name, String description, Integer orderKey) {
         Module module = this.moduleRepository.findModuleById(moduleId);
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
@@ -99,7 +200,26 @@ public class ModuleController {
         if (description != null && !description.isBlank()) {
             lesson.setDescription(description);
         }
-        Integer key = module.getLessons().size();
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
+        }
+        int key = 0;
+        if (orderKey != null) {
+            if (orderKey < 1) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OrderKey must be bigger than 1");
+            }
+            if (module.getLessons().containsKey(orderKey)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a lesson assigned to this orderKey");
+            }
+            key = orderKey;
+        } else {
+            for (int item : module.getLessons().keySet()) {
+                if (key < item) {
+                    key = item;
+                }
+            }
+            key++;
+        }
         module.getLessons().put(key, lesson);
         this.moduleRepository.save(module);
         return this.moduleRepository.findModuleById(moduleId).getLessons().get(key);
@@ -112,6 +232,9 @@ public class ModuleController {
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
         }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
+        }
         return module.getLessons().get(lessonKey);
     }
 
@@ -121,6 +244,9 @@ public class ModuleController {
         Module module = this.moduleRepository.findModuleById(moduleId);
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
         }
         Lesson lesson = module.getLessons().get(lessonKey);
         if (lesson == null) {
@@ -133,7 +259,9 @@ public class ModuleController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course name seems to be empty. Set the name in order to update");
             }
         }
-        lesson.setDescription(description);
+        if (description != null && !description.isBlank()) {
+            lesson.setDescription(description);
+        }
         this.moduleRepository.save(module);
         return this.moduleRepository.findModuleById(moduleId).getLessons().get(lessonKey);
     }
@@ -144,6 +272,9 @@ public class ModuleController {
         Module module = this.moduleRepository.findModuleById(moduleId);
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
         }
         if (module.getLessons().get(lessonKey) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson is invalid");
@@ -169,13 +300,16 @@ public class ModuleController {
 
     @CrossOrigin("*")
     @PostMapping("/api/modules/{moduleId}/lessons/{lessonKey}/contents")
-    public Content postContent(@PathVariable("moduleId") String moduleId, @PathVariable("lessonKey") Integer lessonKey, ContentType type, String url) {
+    public Content postContent(@PathVariable("moduleId") String moduleId, @PathVariable("lessonKey") Integer lessonKey, ContentType type, String url, Integer orderKey) {
         if (type == null || !(type.equals(ContentType.ARTICLE) || type.equals(ContentType.PODCAST) || type.equals(ContentType.VIDEO))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Type is not set or is not applicable");
         }
         Module module = this.moduleRepository.findModuleById(moduleId);
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
+        }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
         }
         if (module.getLessons().get(lessonKey) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson is invalid");
@@ -184,7 +318,26 @@ public class ModuleController {
         if (lesson == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson is not set.");
         }
-        Integer key = lesson.getContents().size();
+        if (lesson.getContents() == null) {
+            lesson.setContents(new HashMap<>());
+        }
+        int key = 0;
+        if (orderKey != null) {
+            if (orderKey < 1) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OrderKey must be bigger than 0");
+            }
+            if (lesson.getContents().containsKey(orderKey)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is a lesson assigned to this orderKey");
+            }
+            key = orderKey;
+        } else {
+            for (int item : lesson.getContents().keySet()) {
+                if (key < item) {
+                    key = item;
+                }
+            }
+            key++;
+        }
         lesson.getContents().put(key, new Content(type, url));
         this.moduleRepository.save(module);
         return this.moduleRepository.findModuleById(moduleId).getLessons().get(lessonKey).getContents().get(key);
@@ -197,9 +350,15 @@ public class ModuleController {
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
         }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
+        }
         Lesson lesson = module.getLessons().get(lessonKey);
         if (lesson == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson is not set.");
+        }
+        if (lesson.getContents() == null) {
+            lesson.setContents(new HashMap<>());
         }
         return lesson.getContents().get(contentId);
     }
@@ -211,10 +370,16 @@ public class ModuleController {
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
         }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
+        }
         if (module.getLessons().get(lessonKey) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson is invalid");
         }
         Lesson lesson = module.getLessons().get(lessonKey);
+        if (lesson.getContents() == null) {
+            lesson.setContents(new HashMap<>());
+        }
         Content content = lesson.getContents().get(contentId);
         if (type != null && (type.equals(ContentType.ARTICLE) || type.equals(ContentType.PODCAST) || type.equals(ContentType.VIDEO))) {
             content.setType(type);
@@ -223,25 +388,36 @@ public class ModuleController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson content type seems to be not set or is not applicable. Set the content type in order to update.");
             }
         }
-
-        content.setUrl(url);
+        if (url != null && !url.isBlank()) {
+            content.setUrl(url);
+        }
         this.moduleRepository.save(module);
         return this.moduleRepository.findModuleById(moduleId).getLessons().get(lessonKey).getContents().get(contentId);
     }
 
     @CrossOrigin("*")
-    @DeleteMapping("/api/modules/{moduleId}/lessons/{lessonKey}/{contentId}")
-    public Boolean deleteLesson(@PathVariable("moduleId") String moduleId, @PathVariable("lessonKey") Integer lessonKey, @PathVariable("contentId") Integer contentId) {
+    @DeleteMapping("/api/modules/{moduleId}/lessons/{lessonKey}/contents/{contentKey}")
+    public Boolean deleteLesson(@PathVariable("moduleId") String moduleId, @PathVariable("lessonKey") Integer lessonKey, @PathVariable("contentKey") Integer contentKey) {
         Module module = this.moduleRepository.findModuleById(moduleId);
         if (module == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Module is invalid");
         }
+        if (module.getLessons() == null) {
+            module.setLessons(new HashMap<>());
+        }
         if (module.getLessons().get(lessonKey) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson is invalid");
         }
-        module.getLessons().get(lessonKey).getContents().remove(contentId);
+        Lesson lesson = module.getLessons().get(lessonKey);
+        if (lesson.getContents() == null) {
+            lesson.setContents(new HashMap<>());
+        }
+        if (lesson.getContents().get(contentKey) == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content is invalid");
+        }
+        lesson.getContents().remove(contentKey);
         this.moduleRepository.save(module);
-        return this.moduleRepository.findModuleById(moduleId).getLessons().get(lessonKey).getContents().get(contentId) == null;
+        return this.moduleRepository.findModuleById(moduleId).getLessons().get(lessonKey).getContents().get(contentKey) == null;
     }
 
 }
