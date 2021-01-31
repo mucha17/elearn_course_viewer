@@ -1,0 +1,38 @@
+FROM maven:3.6-amazoncorretto-15 as builder
+RUN mkdir -p /build
+WORKDIR /build
+COPY pom.xml /build
+RUN mvn -B dependency:resolve dependency:resolve-plugins
+COPY src /build/src
+RUN mvn clean package -Dactive.profile=prod
+
+FROM openjdk:15-jdk-alpine
+RUN addgroup -S apprunners && adduser -S apprunner -G apprunners
+USER apprunner:apprunners
+
+ARG APP_HYPERLINK
+ARG APP_OIDC_CLIENT_ID
+ARG APP_OIDC_CLIENT_SECRET
+ARG APP_OIDC_ISSUER
+ARG APP_OIDC_AUDIENCE
+ARG APP_DB_HOST
+ARG APP_DB_PORT
+ARG APP_DB_NAME
+ARG APP_DB_USER
+ARG APP_DB_PASSWD
+ARG APP_DB_AUTH_SOURCE
+
+ENV APP_HYPERLINK $APP_HYPERLINK
+ENV APP_OIDC_CLIENT_ID $APP_OIDC_CLIENT_ID
+ENV APP_OIDC_CLIENT_SECRET $APP_OIDC_CLIENT_SECRET
+ENV APP_OIDC_ISSUER $APP_OIDC_ISSUER
+ENV APP_OIDC_AUDIENCE $APP_OIDC_AUDIENCE
+ENV APP_DB_HOST $APP_DB_HOST
+ENV APP_DB_PORT $APP_DB_PORT
+ENV APP_DB_NAME $APP_DB_NAME
+ENV APP_DB_USER $APP_DB_USER
+ENV APP_DB_PASSWD $APP_DB_PASSWD
+ENV APP_DB_AUTH_SOURCE $APP_DB_AUTH_SOURCE
+
+COPY --from=builder /build/target*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
