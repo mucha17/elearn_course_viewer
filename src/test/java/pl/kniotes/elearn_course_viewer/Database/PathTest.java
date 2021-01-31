@@ -90,32 +90,32 @@ public class PathTest {
         this.mongoTemplate.dropCollection(Module.class);
     }
 
-    @Test
-    public void addPath() {
-        Section section1 = new Section();
-        section1.setName("Dla początkujących");
-        section1.setDescription("Sekcja zawierające kursy przeznaczone dla rozpoczynających naukę Spring");
-        List<Course> courses = this.courseRepository.findAll();
-        List<OrderedCourse> orderedCourses = new ArrayList<>();
-        for(int i = 0; i < courses.size(); i++) {
-            orderedCourses.add(new OrderedCourse(i+1, courses.get(i)));
-        }
-        section1.setCourses(orderedCourses);
-
-        Section section2 = new Section();
-        section2.setName("Dla zaawansowanych");
-        section2.setDescription("Sekcja zawierające kursy przeznaczone dla kontynuujących naukę Spring");
-        section2.setCourses(orderedCourses);
-
-        HashMap<Integer, Section> sections = new HashMap<>();
-        sections.put(1, section1);
-        sections.put(2, section2);
-
-        Path path = new Path();
-        path.setName("Spring");
-        path.setDescription("Ścieżka nauki Springa");
-        path.setSections(sections);
-        Path result = this.pathRepository.save(path);
-        Assertions.assertNotNull(result);
-    }
+//    @Test
+//    public void addPath() {
+//        Section section1 = new Section();
+//        section1.setName("Dla początkujących");
+//        section1.setDescription("Sekcja zawierające kursy przeznaczone dla rozpoczynających naukę Spring");
+//        List<Course> courses = this.courseRepository.findAll();
+//        List<OrderedCourse> orderedCourses = new ArrayList<>();
+//        for(int i = 0; i < courses.size(); i++) {
+//            orderedCourses.add(new OrderedCourse(i+1, courses.get(i)));
+//        }
+//        section1.setCourses(orderedCourses);
+//
+//        Section section2 = new Section();
+//        section2.setName("Dla zaawansowanych");
+//        section2.setDescription("Sekcja zawierające kursy przeznaczone dla kontynuujących naukę Spring");
+//        section2.setCourses(orderedCourses);
+//
+//        HashMap<Integer, Section> sections = new HashMap<>();
+//        sections.put(1, section1);
+//        sections.put(2, section2);
+//
+//        Path path = new Path();
+//        path.setName("Spring");
+//        path.setDescription("Ścieżka nauki Springa");
+//        path.setSections(sections);
+//        Path result = this.pathRepository.save(path);
+//        Assertions.assertNotNull(result);
+//    }
 }

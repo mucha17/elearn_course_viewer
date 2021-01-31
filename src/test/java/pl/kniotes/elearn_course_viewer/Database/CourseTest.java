@@ -65,20 +65,20 @@ public class CourseTest {
         this.mongoTemplate.dropCollection(Module.class);
     }
 
-    @Test
-    public void addCourse() {
-        Course course = new Course();
-        course.setName("Spring MVC");
-        course.setDescription("Kurs dotyczący Spring MVC");
-        List<Module> modules = this.moduleRepository.findAll();
-        List<OrderedModule> orderedModules = new ArrayList<>();
-        for(int i = 0; i < modules.size(); i++) {
-            orderedModules.add(new OrderedModule(i+1, modules.get(i)));
-        }
-        course.setModules(orderedModules);
-        course.setExam("http://examiner.net/1");
-        course.setInstructor("ID123123123asdada");
-        Course response = this.courseRepository.save(course);
-        Assertions.assertNotNull(response);
-    }
+//    @Test
+//    public void addCourse() {
+//        Course course = new Course();
+//        course.setName("Spring MVC");
+//        course.setDescription("Kurs dotyczący Spring MVC");
+//        List<Module> modules = this.moduleRepository.findAll();
+//        List<OrderedModule> orderedModules = new ArrayList<>();
+//        for(int i = 0; i < modules.size(); i++) {
+//            orderedModules.add(new OrderedModule(i+1, modules.get(i)));
+//        }
+//        course.setModules(orderedModules);
+//        course.setExam("http://examiner.net/1");
+//        course.setInstructor("ID123123123asdada");
+//        Course response = this.courseRepository.save(course);
+//        Assertions.assertNotNull(response);
+//    }
 }

@@ -43,22 +43,22 @@ public class ModuleTest {
         this.mongoTemplate.dropCollection(Module.class);
     }
 
-    @Test
-    public void addModule() {
-        Module module = new Module();
-        module.setName("Wprowadzenie do Spring MVC");
-        module.setDescription("Omówienie podstaw Spring MVC i przygotowanie środowiska do pracy z nowym projektem aplikacji webowej");
-        HashMap<Integer, Lesson> lessons = new HashMap<>();
-        HashMap<Integer, Content> contents = new HashMap<>();
-        contents.put(1, new Content(ContentType.VIDEO, "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"));
-        lessons.put(1, new Lesson("Utworzenie projektu", "Opis lekcji", contents));
-        module.setLessons(lessons);
-        HashMap<Integer, String> downloadables = new HashMap<>();
-        downloadables.put(1, "http://test.local/1");
-        downloadables.put(2, "http://test.local/2");
-        downloadables.put(3, "http://test.local/3");
-        module.setDownloadables(downloadables);
-        Module response = this.moduleRepository.save(module);
-        Assertions.assertNotNull(response);
-    }
+//    @Test
+//    public void addModule() {
+//        Module module = new Module();
+//        module.setName("Wprowadzenie do Spring MVC");
+//        module.setDescription("Omówienie podstaw Spring MVC i przygotowanie środowiska do pracy z nowym projektem aplikacji webowej");
+//        HashMap<Integer, Lesson> lessons = new HashMap<>();
+//        HashMap<Integer, Content> contents = new HashMap<>();
+//        contents.put(1, new Content(ContentType.VIDEO, "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"));
+//        lessons.put(1, new Lesson("Utworzenie projektu", "Opis lekcji", contents));
+//        module.setLessons(lessons);
+//        HashMap<Integer, String> downloadables = new HashMap<>();
+//        downloadables.put(1, "http://test.local/1");
+//        downloadables.put(2, "http://test.local/2");
+//        downloadables.put(3, "http://test.local/3");
+//        module.setDownloadables(downloadables);
+//        Module response = this.moduleRepository.save(module);
+//        Assertions.assertNotNull(response);
+//    }
 }
