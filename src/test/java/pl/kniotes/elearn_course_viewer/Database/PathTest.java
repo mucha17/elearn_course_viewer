@@ -101,13 +101,11 @@ public class PathTest {
             orderedCourses.add(new OrderedCourse(i+1, courses.get(i)));
         }
         section1.setCourses(orderedCourses);
-        section1.setExam("http://examiner.net/s1");
 
         Section section2 = new Section();
         section2.setName("Dla zaawansowanych");
         section2.setDescription("Sekcja zawierające kursy przeznaczone dla kontynuujących naukę Spring");
         section2.setCourses(orderedCourses);
-        section2.setExam("http://examiner.net/s2");
 
         HashMap<Integer, Section> sections = new HashMap<>();
         sections.put(1, section1);
@@ -117,7 +115,6 @@ public class PathTest {
         path.setName("Spring");
         path.setDescription("Ścieżka nauki Springa");
         path.setSections(sections);
-        path.setExam("http://examiner.net/p1");
         Path result = this.pathRepository.save(path);
         Assertions.assertNotNull(result);
     }
